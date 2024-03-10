@@ -33,7 +33,19 @@ export class CreateArtistsTable1709968060270 implements MigrationInterface {
                 type: 'text',
                 isNullable: true,
             },
-        ]
+            {
+                name: 'user_id',
+                type: 'int',
+            },
+        ],
+        foreignKeys:[
+            {
+                columnNames: ['user_id'],
+                referencedTableName: 'users',
+                referencedColumnNames:['id'],
+                onDelete: 'CASCADE',
+            },
+        ],
        }),
        true);
     }
