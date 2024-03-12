@@ -38,7 +38,8 @@ export class CreateAppointmentsTable1709968138859 implements MigrationInterface 
             ]
         }), true);
 
-         // Crear claves foráneas
+         // claves foráneas
+
          await queryRunner.createForeignKeys('appointments', [
             new TableForeignKey({
                 columnNames: ['client_id'],
@@ -63,6 +64,7 @@ export class CreateAppointmentsTable1709968138859 implements MigrationInterface 
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.dropTable('appointments');
     }
 
 }
