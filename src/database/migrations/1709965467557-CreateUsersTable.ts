@@ -13,17 +13,13 @@ export class CreateUsersTable1709965467557 implements MigrationInterface {
                     isGenerated: true,
                     generationStrategy: 'increment',
                 },
-                {
-                    name: 'username',
-                    type: 'varchar',
-                    length: "50",
-                    isUnique: true,
-                },
-                {
-                    name: 'password',
-                    type: 'varchar',
-                    length: "255",
-                },
+                // {
+                //     name: 'username',
+                //     type: 'varchar',
+                //     length: "50",
+                //     isUnique: true,
+                // },
+               
                 {
                     name: 'first_name',
                     type: 'varchar',
@@ -48,6 +44,11 @@ export class CreateUsersTable1709965467557 implements MigrationInterface {
                     name: 'email',
                     type: 'varchar',
                     isUnique: true,
+                },
+                 {
+                    name: 'password',
+                    type: 'varchar',
+                    length: "255",
                 },
                 {
                     name: "is_active",

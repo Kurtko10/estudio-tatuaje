@@ -1,4 +1,4 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm"
+import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm"
 import { Role  } from "./Role";
 import { Artist } from "./Artist";
 import { Client } from "./Client";
@@ -7,11 +7,7 @@ export class User extends BaseEntity {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column({name: "name"})
-    name!: string;
 
-    @Column({ name: "password", select: false })
-    password!: string;
 
     @Column({ name: "first_name" })
     firstName!: string;
@@ -27,6 +23,8 @@ export class User extends BaseEntity {
 
     @Column({ name: "email" })
     email!: string;
+    @Column({ name: "password", select: false })
+    password!: string;
 
     @Column({ name: "is_active" })
     isActive!: boolean;
@@ -41,7 +39,8 @@ export class User extends BaseEntity {
 @OneToMany(() => Artist, artist => artist.user)
 artists?: Artist[];
 
-@OneToMany(() => Client, (client) => client.user)
+@OneToOne(() => Client, (client) => client.user)
+
 clients?: Client[];
 
 }

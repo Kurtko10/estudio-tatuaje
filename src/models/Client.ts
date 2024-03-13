@@ -7,6 +7,9 @@ export class Client extends BaseEntity {
     @PrimaryGeneratedColumn()
     id!: number;
 
+    @Column({ name: "lastName", length: 50 }) // Agrega la columna para el lastName
+    lastName!: string;
+
     @Column({ name: "provincia", length: 100 })
     provincia!: string;
 
@@ -14,6 +17,8 @@ export class Client extends BaseEntity {
 
     @ManyToOne(() => User, (user) => user.clients)
     @JoinColumn({ name: 'user_id' })
+    
+    
     user!: User;
 
         // relación uno a muchos con las citas completadas

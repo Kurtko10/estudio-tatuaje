@@ -44,12 +44,12 @@ export class CreatePaymentsTable1709968192353 implements MigrationInterface {
                     referencedColumnNames: ['id'],
                     referencedTableName: 'clients',
                 },
-                {
-                    columnNames: ['appointment_id'],
-                    referencedColumnNames: ['id'],
-                    referencedTableName: 'appointments',
-                    onDelete: 'CASCADE',
-                }
+                // {
+                //     columnNames: ['appointment_id'],
+                //     referencedColumnNames: ['id'],
+                //     referencedTableName: 'appointments',
+                //     onDelete: 'CASCADE',
+                // }
             ]
         }), true);
     }

@@ -1,10 +1,8 @@
 import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-//import { Client } from "./Client";
-//import { Artist } from "./Artist";
 import { Service } from "./Service";
 import { Artist } from "./Artist";
 import { CompletedAppointment } from "./CompletedAppointment";
-
+import { AppointmentStatus } from "../constants/AppointmentStatus";
 @Entity('appointments')
 export class Appointment extends BaseEntity {
     @PrimaryGeneratedColumn()
@@ -14,7 +12,7 @@ export class Appointment extends BaseEntity {
     datetime!: Date;
 
     @Column({ name: 'status', length: 20 })
-    status!: string;
+    status!: AppointmentStatus;
 
     @ManyToOne(() => Service, service => service.apointments)
     @JoinColumn({ name: 'service_id' })
