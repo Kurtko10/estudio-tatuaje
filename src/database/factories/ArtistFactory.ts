@@ -6,7 +6,7 @@ export class ArtistFactory extends Factory<Artist>{
     protected generate(): Artist {
         return{
             
-            name: faker.person.fullName(),
+           //name: faker.person.fullName(),
             specialty: faker.helpers.arrayElement([
                 "BlackWhite", 
                 "Realista",
