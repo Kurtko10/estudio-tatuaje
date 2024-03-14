@@ -10,7 +10,6 @@ export class UserSeeder extends Seeder{
         const {ADMINS, MANAGERS, CLIENTS, ARTISTS, APPOINTMENT, COMPLETED_APPOINTMENT}=SeederConfig;
 
         const userFactory = new UserFactory();
-        //const books = await Book.find();
 
         //admins
         const adminUsers = userFactory.createMany(ADMINS);
@@ -25,6 +24,7 @@ export class UserSeeder extends Seeder{
         managerUsers.forEach((user, i)=> {
             user.role = UserRoles.MANAGER;
             user.email = `manager${i + 1}@manager.com`
+            
         });
 
         //clientes

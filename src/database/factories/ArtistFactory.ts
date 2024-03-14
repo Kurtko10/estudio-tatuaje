@@ -4,6 +4,8 @@ import { Factory } from "./Factory";
 
 export class ArtistFactory extends Factory<Artist>{
     protected generate(): Artist {
+
+        
         return{
             
            //name: faker.person.fullName(),
@@ -14,6 +16,7 @@ export class ArtistFactory extends Factory<Artist>{
                 "Laser"
             ]),
             biography: faker.person.bio(),
+            portfolio: faker.image.urlLoremFlickr(),
         
             }as Artist
     }

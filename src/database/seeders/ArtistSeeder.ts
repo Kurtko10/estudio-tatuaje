@@ -20,6 +20,8 @@ export class ArtistSeeder extends Seeder{
             artist.user = users[index];
             // Asigna el lastName del usuario al cliente
             artist.name = users[index].lastName;
+
+            
         });
 
         // Guardar los clientes

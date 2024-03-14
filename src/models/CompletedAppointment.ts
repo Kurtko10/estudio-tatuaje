@@ -10,6 +10,8 @@ export class CompletedAppointment extends BaseEntity {
     @Column({ name: "completed_date" })
     completedDate!: Date;
 
+
+    
 //-----------
 
     @ManyToOne(() => Appointment, (appointment) => appointment.completedAppointments)

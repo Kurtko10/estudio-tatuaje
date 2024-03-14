@@ -4,7 +4,7 @@ import { faker } from "@faker-js/faker";
 
 
 export class ServiceFactory extends Factory<Service>{
-    protected generate(): Service {
+    public generate(): Service {
         return {
             
             name: faker.helpers.arrayElement([

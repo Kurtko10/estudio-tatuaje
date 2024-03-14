@@ -7,7 +7,7 @@ export class AppointmentFactory extends Factory<Appointment>{
     protected generate(): Appointment {
       return  {
 
-        datetime: faker.date.future(),
+        datetime: faker.date.anytime(),
         status: faker.helpers.arrayElement([
             AppointmentStatus.PENDING,
             AppointmentStatus.IN_PROGRESS,
