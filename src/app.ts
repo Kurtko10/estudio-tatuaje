@@ -3,6 +3,7 @@ import coors from 'cors';                               // Importa el módulo co
 import { corsOptions } from './config/cors';            // Importa las opciones de configuración CORS desde un archivo separado
 import dotenv from "dotenv";                            // Importa el módulo dotenv para cargar variables de entorno desde un archivo .env
 import baseRoute from "./routes/base.routes";           // Importa las rutas base de la aplicación
+import apiRoutes from './routes/api.routes';
 
 
 dotenv.config(); // Carga las variables de entorno desde el archivo .env
@@ -15,6 +16,9 @@ app.use(coors(corsOptions)); // Usa el middleware cors con las opciones definida
 
 //------Base route--------
 app.use("/", baseRoute); // Establece la ruta base 
+
+//Registrer API routes
+app.use("/api", apiRoutes);
 
 export default app; // Exporta Express para su utilización por otros módulos
 

@@ -18,8 +18,8 @@ export class User extends BaseEntity {
     @Column({ name: "phone" })
     phone!: string;
 
-    @CreateDateColumn({ name: "registration_date" })
-    registrationDate!: Date;
+    // @CreateDateColumn({ name: "registration_date" })
+    // registrationDate!: Date;
 
     @Column({ name: "email" })
     email!: string;

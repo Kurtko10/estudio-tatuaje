@@ -4,7 +4,7 @@ import { dataSource } from "./database/data-source";
 
 //-----------
 
-const PORT = 3010;
+const PORT = process.env.PORT || 3010
 
 dataSource
     .initialize()

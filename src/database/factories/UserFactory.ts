@@ -13,7 +13,7 @@ export class UserFactory extends Factory<User>{
             password: bcrypt.hashSync("12345678",10),
             phone: faker.phone.number(),
             email: faker.internet.email(),
-            registrationDate:faker.date.anytime(),
+            // registrationDate:faker.date.anytime(),
             isActive: true,
 
         }as User
