@@ -1,8 +1,8 @@
-import express, { Application } from 'express';         // Importa express y la interfaz Application de express
-import coors from 'cors';                               // Importa el módulo cors para manejar los encabezados CORS
-import { corsOptions } from './config/cors';            // Importa las opciones de configuración CORS desde un archivo separado
-import dotenv from "dotenv";                            // Importa el módulo dotenv para cargar variables de entorno desde un archivo .env
-import baseRoute from "./routes/base.routes";           // Importa las rutas base de la aplicación
+import express, { Application } from 'express';         
+import coors from 'cors';                               
+import { corsOptions } from './config/cors';           
+import dotenv from "dotenv";                            
+import baseRoute from "./routes/base.routes";           
 import apiRoutes from './routes/api.routes';
 
 
@@ -19,6 +19,8 @@ app.use("/", baseRoute); // Establece la ruta base
 
 //Registrer API routes
 app.use("/api", apiRoutes);
+
+
 
 export default app; // Exporta Express para su utilización por otros módulos
 

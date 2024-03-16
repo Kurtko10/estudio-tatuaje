@@ -18,9 +18,8 @@ router.get("/role/role/:roleId", userController.getByClientRole);
 router.post("/", userController.create);
 
 
-router.get("/search/:name", userController.getUserByName)
+router.get("/search/:name", userController.getUserByName);
 
-router.get("/:id/appointments", userController.getAppointmentsByClientId);
 
 router.get("/:id", (req, res) => {
     res.send("usuario listado por ID ");

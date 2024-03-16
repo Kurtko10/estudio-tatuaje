@@ -4,6 +4,9 @@ import { Client } from "../models/Client";
 import { Like } from "typeorm";
 import bcrypt from "bcrypt";
 import { Role } from "../models/Role";
+import { Appointment } from "../models/Appointment";
+import { Artist } from "../models/Artist";
+import { Service } from "../models/Service";
 
 
 export const userController = {
@@ -163,46 +166,7 @@ async create(req:Request,res:Response){
   },
 
 
-// Citas del usuario por ID
 
-  async getAppointmentsByClientId(req: Request, res: Response): Promise<void> {
-    try {
-        const clientId: number = parseInt(req.params.id);
-
-        const client = await Client.findOne({
-            relations: ["appointments", "appointments.service", "appointments.artist"], 
-            select: ["id", "lastName"], 
-            where:{
-                id:clientId,
-            },
-        });
-
-        if (!client) {
-            res.status(404).json({ message: "Client not found" });
-            return;
-        }
-
-        // Obtiene las citas asociadas al cliente
-        const appointments = client!.appointments.map(appointment => ({
-            id: appointment.id,
-            datetime: appointment.datetime,
-
-            service: { // Datos del servicio
-                id: appointment.service.id,
-                name: appointment.service.name, 
-            },
-            artist: {   // datos del artista
-                id: appointment.artist.id,
-                name: appointment.artist.name, 
-            },
-        }));
-
-        res.json(appointments);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Internal server error" });
-    }
-},
 
 
 };
