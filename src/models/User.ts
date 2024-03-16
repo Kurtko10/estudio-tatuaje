@@ -2,6 +2,8 @@ import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, On
 import { Role  } from "./Role";
 import { Artist } from "./Artist";
 import { Client } from "./Client";
+
+
 @Entity('users')
 export class User extends BaseEntity {
     @PrimaryGeneratedColumn()

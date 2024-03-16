@@ -4,7 +4,7 @@ import { Service } from "../models/Service";
 import { Artist } from "../models/Artist";
 import { Client } from "../models/Client";
 import { AppointmentStatus } from "../constants/AppointmentStatus";
-import { faker } from "@faker-js/faker";
+import { ar, faker } from "@faker-js/faker";
 
 export const appointmentController = {
 
@@ -106,7 +106,7 @@ async updateAppointment(req: Request, res: Response): Promise<void> {
 
         const newStatus = getNewStatus();
 
-        // Aplicar cambios
+        
         appointment.datetime = newDatetime || datetime;
         appointment.status = newStatus;
         appointment.service = service || appointment.service;
@@ -171,7 +171,70 @@ async getAppointmentsByClientId(req: Request, res: Response): Promise<void> {
         res.status(500).json({ message: "Internal server error" });
     }
 },
+ // Eliminar cita
+ async deleteAppointment(req: Request, res: Response): Promise<void> {
+    try {
+      const appointmentId = Number(req.params.id);
 
+      const deleteResult = await Appointment.delete(appointmentId);
+
+      if (deleteResult.affected === 0) {
+        res.status(404).json({ message: "Cita no encontrada" });
+        return;
+      }
+
+      res.status(200).json({ message: `Cita con id ${appointmentId} eliminada` });
+    } catch (error) {
+      res.status(500).json({ message: "Error al eliminar" });
+    }
+  },
+
+  async getAppointmentsByArtistId(req: Request, res: Response): Promise<void> {
+    try {
+        const artistId: number = Number(req.params.id);
+
+        const artist = await Artist.findOne({
+            relations: ["appointments", "appointments.service", "appointments.client"], 
+            select: ["id", "name"], 
+            where:{
+                id: artistId,
+            },
+        });
+
+        if (!artist) {
+            res.status(404).json({ message: "Artist not found" });
+            return;
+        }
+
+        const appointments = await Appointment.find({
+            relations: ["service", "client",],
+            where: {
+                artist: artist,
+            },
+        });
+
+        const formattedAppointments = [];
+        for (const appointment of appointments) {
+            formattedAppointments.push({
+                id: appointment.id,
+                datetime: appointment.datetime,
+                service: {
+                    id: appointment.service.id,
+                    name: appointment.service.name,
+                },
+                client: {
+                    id: appointment.client.id,
+                    lastName: appointment.client.lastName,
+                },
+            });
+        }
+
+        res.json(formattedAppointments).status(200);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+},
 
 
 

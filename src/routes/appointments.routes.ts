@@ -7,10 +7,16 @@ const router = express.Router();
 router.post("/", appointmentController.createAppointment);
 
 // Ruta para actualizar una cita específica
-router.put('/:appointmentId', appointmentController.updateAppointment);
+router.put('/:id', appointmentController.updateAppointment);
+
+// Eliminar cita
+router.delete("/:id",appointmentController.deleteAppointment);
 
 // Citas de un usuario por client_Id
-router.get('/:id/appointments', appointmentController.getAppointmentsByClientId);
+router.get('/client/:id', appointmentController.getAppointmentsByClientId);
+
+// Citas de un artista
+router.get('/artist/:id',appointmentController.getAppointmentsByArtistId);
 
 
 

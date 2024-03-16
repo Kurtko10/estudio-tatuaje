@@ -7,6 +7,7 @@ import { Role } from "../models/Role";
 import { Appointment } from "../models/Appointment";
 import { Artist } from "../models/Artist";
 import { Service } from "../models/Service";
+import { UserRoles } from '../constants/UserRoles';
 
 
 export const userController = {
@@ -52,6 +53,58 @@ async create(req:Request,res:Response){
         res.status(500).json({message:"Error al crear usuario"});
     }
 },
+
+// Actualizar datos de usuario
+async  update(req: Request<{ id: string }, {}, Partial<User>>, res: Response): Promise<void> {
+  try {
+      const userId = Number(req.params.id);
+      const { password, role, ...userData } = req.body;
+
+      const userToUpdate = await User.findOne({
+          where: { id: userId },
+      });
+
+      if (!userToUpdate) {
+          res.status(404).json({ message: "User not found" });
+          return;
+      }
+
+      if (password) {
+          const hashedPassword = await bcrypt.hash(password, 10);
+          userToUpdate.password = hashedPassword;
+      }
+
+      const updateUser: Partial<User> = {
+        ...userToUpdate,
+        ...userData,
+      };
+
+      await User.save(updateUser);
+
+      res.status(202).json({ message: "User updated successfully" });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Failed to update user" });
+  }
+},
+
+  // Eliminar usuario
+  async delete(req: Request, res: Response): Promise<void> {
+    try {
+      const userId = Number(req.params.id);
+
+      const deleteResult = await User.delete(userId);
+
+      if (deleteResult.affected === 0) {
+        res.status(404).json({ message: "Usuario no existe" });
+        return;
+      }
+
+      res.status(200).json({ message: `Usuario con ID: ${userId} ELIMINADO`});
+    } catch (error) {
+      res.status(500).json({ message: "Error al borrar" });
+    }
+  },
 
 // Listar usuarios, para ADMIN -------
 
@@ -99,29 +152,31 @@ async create(req:Request,res:Response){
 
 // Mostrar usuarios por ID de rol-------
 
-    async getByRole(req: Request, res: Response): Promise<void> {
-        try {
-            const roleId = Number(req.params.roleId);
+async getByArtistRole(req: Request, res: Response): Promise<void> {
+  try {
+      const roleId = 2; 
 
-            const users = await User.find({
-                where: {
-                role:{ id:roleId} } });
+      const users = await User.find({
+          where: {
+              role: { id: roleId }
+          }
+      });
 
-            if (users.length === 0) {
-                res.status(404).json({ message: "No users found with this role" });
-            return;
-        }
+      if (users.length === 0) {
+          res.status(404).json({ message: "No users found with this role" });
+          return;
+      }
 
-        res.json(users);
-        } catch (error) {
-            console.error(error);
-        res.status(500).json({ message: "Internal server error" });
-        }
-    },
+      res.json(users);
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Internal server error" });
+  }
+},
 
     async getByClientRole(req: Request, res: Response): Promise<void> {
         try {
-            const roleId = 3; // ID del rol de cliente
+            const roleId = 3; 
     
             const users = await User.find({
                 where: {
