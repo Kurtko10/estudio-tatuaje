@@ -32,16 +32,9 @@ export class UserSeeder extends Seeder{
         const clientUsers = userFactory.createMany(CLIENTS);
         clientUsers.forEach((user)=> {
             user.role = UserRoles.CLIENT;
-            //user.favoriteBooks = getRandomSubarray(books,FAVORITE_BOOKS_PER_USER );
-
         });
-
-        //save
 
         const allUsers = [...adminUsers,...managerUsers,...clientUsers];
         await User.save(allUsers);
-
-
-
     }
-}
+};

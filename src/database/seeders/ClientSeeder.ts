@@ -35,23 +35,18 @@ import { UserRoles } from "../../constants/UserRoles";
 
 export class ClientSeeder extends Seeder {
 
+    // Crear cliente
     protected async generate(): Promise<void> {
         
         const { CLIENTS } = SeederConfig;
-
-        // Obtener todos los usuarios existentes
         const users = await User.find({where:{role:UserRoles.CLIENT}});
-
-        // Crear instancias de clientes y asignar user_id correspondiente
         const clients = new ClientFactory().createMany(CLIENTS);
+       
         clients.forEach((client, index) => {
-            // Asigna el ID del usuario al cliente
             client.user = users[index];
-            // Asigna el lastName del usuario al cliente
             client.lastName = users[index].lastName;
         });
 
-        // Guardar los clientes
         await Client.save(clients);
     }
 }

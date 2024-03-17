@@ -174,6 +174,7 @@ async getByArtistRole(req: Request, res: Response): Promise<void> {
   }
 },
 
+  // Ver clientes por ID client
     async getByClientRole(req: Request, res: Response): Promise<void> {
         try {
             const roleId = 3; 

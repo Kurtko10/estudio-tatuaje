@@ -26,10 +26,6 @@ router.delete("/:id",userController.delete);
 
 router.get("/search/:name", userController.getUserByName);
 
-
-router.get("/:id", (req, res) => {
-    res.send("usuario listado por ID ");
- });
  
 
 

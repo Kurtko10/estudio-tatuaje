@@ -80,7 +80,6 @@ async updateAppointment(req: Request, res: Response): Promise<void> {
             return;
         }
 
-        // Mantener la fecha actual si no se proporciona una nueva fecha
         let newDatetime = appointment.datetime;
         if (datetime) {
             newDatetime = new Date(datetime);
@@ -90,7 +89,6 @@ async updateAppointment(req: Request, res: Response): Promise<void> {
             }
         }
 
-        // Función para determinar el nuevo estado de la cita automáticamente
         const getNewStatus = (): AppointmentStatus => {
             const currentDate = new Date();
             if (newDatetime < currentDate) {
@@ -189,6 +187,8 @@ async getAppointmentsByClientId(req: Request, res: Response): Promise<void> {
     }
   },
 
+
+  // Ver citas por ID artista
   async getAppointmentsByArtistId(req: Request, res: Response): Promise<void> {
     try {
         const artistId: number = Number(req.params.id);
