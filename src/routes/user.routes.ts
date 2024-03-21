@@ -1,33 +1,41 @@
 import express from "express";
 import { userController } from "../controllers/userController";
+import { auth } from "../middlewares/auth";
+import { authorize } from "../middlewares/authorize";
+
 
 const router = express.Router();
 
 
 // Ruta para obtener todos los usuarios
-router.get("/", userController.getAllUsers);
+router.get("/",auth,authorize(["manager"]), userController.getAllUsers);
+
 // Obtener usuario por Id
-router.get("/:id",userController.getById);
+router.get("/:id",auth,authorize(["manager"]),userController.getById);
+
+// Obtener usuario por nombre
+router.get("/search/:name",auth,authorize(["manager"]), userController.getUserByName);
 
 // Obtener todos los artistas
-router.get("/role/artists", userController.getByArtistRole);
+router.get("/role/artists", userController.getArtist);
+
 // Obtener todos los clientes
-router.get("/role/clients", userController.getByClientRole);
+router.get("/role/clients",auth, authorize(["manager"]), userController.getByClientRole);
+
+// Ver perfil personal de usuario
+router.get("/profile/profile",auth, userController.getProfile);
+
+// Actualizar perfil personal usuario
+router.put("/profile", auth, userController.updateProfile);
 
 // Crear usuario
-router.post("/", userController.create);
+router.post("/",auth,authorize([]), userController.create);
 
-// Actualizar usuario
-router.put("/:id",userController.update);
+// Actualizar usuario por ID
+router.put("/:id",auth,authorize([]),userController.update);
 
 // Eliminar usuario
-router.delete("/:id",userController.delete);
-
-
-router.get("/search/:name", userController.getUserByName);
-
- 
-
+router.delete("/:id",auth,authorize([]),userController.delete);
 
 
 export default router;

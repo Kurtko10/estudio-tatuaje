@@ -8,7 +8,7 @@ export class ArtistFactory extends Factory<Artist>{
         
         return{
             
-           //name: faker.person.fullName(),
+          
             specialty: faker.helpers.arrayElement([
                 "BlackWhite", 
                 "Realista",

@@ -1,4 +1,3 @@
-import { error } from "console";
 import app  from "./app";
 import { dataSource } from "./database/data-source";
 
@@ -12,7 +11,7 @@ dataSource
         console.log(`📚 Data source initialized`)
         app.listen(PORT, ()=> console.log(`🚀server runing on port ${PORT}`));
         })
-        .catch(()=>{
+        .catch((error)=>{
             console.error(error);
             process.exit(1);
              

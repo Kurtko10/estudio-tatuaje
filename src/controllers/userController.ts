@@ -3,11 +3,7 @@ import { User } from "../models/User";
 import { Client } from "../models/Client";
 import { Like } from "typeorm";
 import bcrypt from "bcrypt";
-import { Role } from "../models/Role";
-import { Appointment } from "../models/Appointment";
 import { Artist } from "../models/Artist";
-import { Service } from "../models/Service";
-import { UserRoles } from '../constants/UserRoles';
 
 
 export const userController = {
@@ -54,6 +50,94 @@ async create(req:Request,res:Response){
     }
 },
 
+  // Eliminar usuario
+  async delete(req: Request, res: Response): Promise<void> {
+    try {
+      const userId = Number(req.params.id);
+
+      const deleteResult = await User.delete(userId);
+
+      if (deleteResult.affected === 0) {
+        res.status(404).json({ message: "Usuario no existe" });
+        return;
+      }
+
+      res.status(200).json({ message: `Usuario con ID: ${userId} ELIMINADO`});
+    } catch (error) {
+      res.status(500).json({ message: "Error al borrar" });
+    }
+  },
+
+// Listar usuarios, para ADMIN -------
+
+async getAllUsers(req: Request, res: Response): Promise<void> {
+  try {
+      const [users, totalUsers] = await User.findAndCount({
+          relations:{
+              role:true,
+          },
+      }); 
+      if (totalUsers === 0) {
+          res.status(404).json({ message: "Users not found" });
+          return;
+        }
+      res.json(users); 
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Internal server error" });
+  }
+},
+  
+// Mostrar usuarios por ID de rol-------
+
+async getArtist(req: Request, res: Response): Promise<void> {
+  try {
+            const artists = await Artist.findAndCount({
+                relations: ["user"],
+                select: {
+                    id: true,
+                    name: true,
+                    specialty: true,
+                    biography: true,
+                    portfolio: true,
+                    user: {
+                        firstName: true,
+                        email: true,
+                        phone: true,
+                    },
+                },
+            });
+            res.json(artists);
+        } catch (error) {
+            res.status(500).json({ message: "Something went wrong" });
+        }
+},
+
+// Mostrar usuario por ID----------
+
+async getById(req: Request, res: Response): Promise<void> {
+  try {
+    const userId = Number(req.params.id);
+
+    if (!userId || userId <= 0) {
+      res.status(400).json({ message: "Invalid user ID" });
+      return;
+    }
+
+    const user = await User.findOne({ where: { id: userId } });
+
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+},
+
+
 // Actualizar datos de usuario
 async  update(req: Request<{ id: string }, {}, Partial<User>>, res: Response): Promise<void> {
   try {
@@ -88,91 +172,86 @@ async  update(req: Request<{ id: string }, {}, Partial<User>>, res: Response): P
   }
 },
 
-  // Eliminar usuario
-  async delete(req: Request, res: Response): Promise<void> {
-    try {
-      const userId = Number(req.params.id);
+// Actualizar perfil
 
-      const deleteResult = await User.delete(userId);
-
-      if (deleteResult.affected === 0) {
-        res.status(404).json({ message: "Usuario no existe" });
-        return;
-      }
-
-      res.status(200).json({ message: `Usuario con ID: ${userId} ELIMINADO`});
-    } catch (error) {
-      res.status(500).json({ message: "Error al borrar" });
-    }
-  },
-
-// Listar usuarios, para ADMIN -------
-
-    async getAllUsers(req: Request, res: Response): Promise<void> {
-        try {
-            const [users, totalUsers] = await User.findAndCount({
-                relations:{
-                    role:true,
-                },
-            }); 
-            if (totalUsers === 0) {
-                res.status(404).json({ message: "Users not found" });
-                return;
-              }
-            res.json(users); 
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: "Internal server error" });
-        }
-    },
-
-// Mostrar usuario por ID----------
-
-    async getById(req: Request, res: Response): Promise<void> {
-        try {
-          const userId = Number(req.params.id);
-    
-          if (!userId || userId <= 0) {
-            res.status(400).json({ message: "Invalid user ID" });
-            return;
-          }
-    
-          const user = await User.findOne({ where: { id: userId } });
-    
-          if (!user) {
-            res.status(404).json({ message: "User not found" });
-            return;
-          }
-    
-          res.json(user);
-        } catch (error) {
-          res.status(500).json({ message: "Internal server error" });
-        }
-      },
-
-// Mostrar usuarios por ID de rol-------
-
-async getByArtistRole(req: Request, res: Response): Promise<void> {
+async updateProfile(
+  req: Request<{  }, {}, Partial<User>>,
+  res: Response
+): Promise<void> {
   try {
-      const roleId = 2; 
+    const userId = req.tokenData.userId;
+    const { password, role, ...resUserData } = req.body;
 
-      const users = await User.find({
-          where: {
-              role: { id: roleId }
-          }
-      });
+    const userToUpdate = await User.findOne({
+      where: { id: userId },
+    });
 
-      if (users.length === 0) {
-          res.status(404).json({ message: "No users found with this role" });
-          return;
-      }
+    if (!userToUpdate) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
 
-      res.json(users);
+    if (password) {
+      const hashedPassword = bcrypt.hashSync(password, 10);
+      userToUpdate.password = hashedPassword;
+    }
+
+    Object.assign(userToUpdate, resUserData);
+
+    await User.save(userToUpdate);
+
+    const clientToUpdate = await Client.findOne({
+      where: { user: userToUpdate },
+    });
+
+    if (clientToUpdate) {
+      Object.assign(clientToUpdate, resUserData);
+      await Client.save(clientToUpdate);
+    }
+
+    res.status(202).json({ message: "User update successful" });
   } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Internal server error" });
+    console.error(error);
+    res.status(500).json({ message: "Failed to update user" });
   }
 },
+
+  // Ver perfil usuario-----------
+
+  async getProfile(req: Request, res: Response): Promise<void> {
+    try {
+        const userId = req.tokenData.userId;
+
+ 
+        const user = await User.findOne({
+            relations: ["role", "clients", "artists"],
+            where: { id: userId }
+        });
+
+        if (!user) {
+            res.status(404).json({ message: "User not found" });
+            return;
+        }
+
+        if (user.role && user.role.name === "admin") {
+           
+            delete user.clients;
+            delete user.artists;
+        } else if (user.artists && user.artists.length > 0) {
+           
+            delete user.clients;
+        } else {
+          
+            delete user.artists;
+        }
+
+        res.json(user);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Failed to retrieve user profile" });
+    }
+},
+
 
   // Ver clientes por ID client
     async getByClientRole(req: Request, res: Response): Promise<void> {
@@ -220,9 +299,5 @@ async getByArtistRole(req: Request, res: Response): Promise<void> {
       res.status(500).json({ message: "Internal server error" });
     }
   },
-
-
-
-
 
 };

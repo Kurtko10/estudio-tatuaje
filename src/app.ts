@@ -4,6 +4,7 @@ import { corsOptions } from './config/cors';
 import dotenv from "dotenv";                            
 import baseRoute from "./routes/base.routes";           
 import apiRoutes from './routes/api.routes';
+import { handleNotFound } from './middlewares/errorHandler';
 
 
 dotenv.config(); // Carga las variables de entorno desde el archivo .env
@@ -19,6 +20,8 @@ app.use("/", baseRoute); // Establece la ruta base
 
 //Registrer API routes
 app.use("/api", apiRoutes);
+
+app.use(handleNotFound);
 
 
 

@@ -5,6 +5,7 @@ import { Artist } from "../models/Artist";
 import { Client } from "../models/Client";
 import { AppointmentStatus } from "../constants/AppointmentStatus";
 import { ar, faker } from "@faker-js/faker";
+import { User } from "../models/User";
 
 export const appointmentController = {
 
@@ -33,7 +34,7 @@ async createAppointment(req: Request, res: Response): Promise<void> {
         }
 
         let status = AppointmentStatus.PENDING;
-        const appointmentDate = datetime ? new Date(datetime) : faker.date.future();
+        const appointmentDate = datetime ? new Date(datetime) : faker.date.future();//Utilizamos faker a modo prueba si no se da una fecha
         const currentDate = new Date();
 
         if (appointmentDate < currentDate) {
@@ -63,11 +64,10 @@ async createAppointment(req: Request, res: Response): Promise<void> {
     }
 },
 
-    
-// Actualizar cita por Id de cita
+ // Actualizar cita por Id de cita
 async updateAppointment(req: Request, res: Response): Promise<void> {
     try {
-        const appointmentId = Number(req.params.appointmentId);
+        const appointmentId = Number(req.params.id);
         const { datetime, status, service, artist } = req.body;
 
         const appointment = await Appointment.findOne({ 
@@ -124,35 +124,43 @@ async updateAppointment(req: Request, res: Response): Promise<void> {
         });
     } catch (error) {
         console.error("Error updating appointment:", error);
+        
         res.status(500).json({ message: "Internal server error" });
     }
 },
 
 
-// Citas del usuario por ID
-
 async getAppointmentsByClientId(req: Request, res: Response): Promise<void> {
     try {
-        const clientId: number = Number(req.params.id);
+        const userId = req.tokenData.userId;
 
-        const client = await Client.findOne({
-            relations: ["appointments", "appointments.service", "appointments.artist"], 
-            select: ["id", "lastName"], 
-            where:{
-                id:clientId,
-            },
-        });
+        const user = await User.findOne({where:{id:userId}});
+
+        if (!user) {
+            res.status(404).json({ message: "User not found" });
+            return;
+        }
+
+        const client = await Client.findOne({ where: { user: user } });
 
         if (!client) {
             res.status(404).json({ message: "Client not found" });
             return;
         }
 
-        // Obtiene las citas asociadas al cliente
-        const appointments = client!.appointments.map(appointment => ({
+        const appointments = await Appointment.find({
+            where: { client: client },
+            relations: ["service", "artist"]
+        });
+
+        if (!appointments || appointments.length === 0) {
+            res.status(404).json({ message: "No appointments found for this client" });
+            return;
+        }
+
+        const formattedAppointments = appointments.map(appointment => ({
             id: appointment.id,
             datetime: appointment.datetime,
-
             service: { // Datos del servicio
                 id: appointment.service.id,
                 name: appointment.service.name, 
@@ -163,12 +171,14 @@ async getAppointmentsByClientId(req: Request, res: Response): Promise<void> {
             },
         }));
 
-        res.json(appointments);
+        res.json(formattedAppointments);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Internal server error" });
     }
 },
+
+
  // Eliminar cita
  async deleteAppointment(req: Request, res: Response): Promise<void> {
     try {
@@ -187,56 +197,52 @@ async getAppointmentsByClientId(req: Request, res: Response): Promise<void> {
     }
   },
 
+// Citas de artista
 
-  // Ver citas por ID artista
-  async getAppointmentsByArtistId(req: Request, res: Response): Promise<void> {
+async  getAppointmentsByArtistId(req: Request, res: Response): Promise<void> {
     try {
-        const artistId: number = Number(req.params.id);
+        const userId = req.tokenData.userId;
 
-        const artist = await Artist.findOne({
-            relations: ["appointments", "appointments.service", "appointments.client"], 
-            select: ["id", "name"], 
-            where:{
-                id: artistId,
-            },
-        });
+        const user = await User.findOne({where:{id:userId}});
+
+        if (!user) {
+            res.status(404).json({ message: "User not found" });
+            return;
+        }
+
+        const artist = await Artist.findOne({ where: { user: user } });
 
         if (!artist) {
-            res.status(404).json({ message: "Artist not found" });
+            res.status(404).json({ message: "Artist not found for this user" });
             return;
         }
 
         const appointments = await Appointment.find({
-            relations: ["service", "client",],
+            relations: ["service", "client"],
             where: {
                 artist: artist,
             },
         });
 
-        const formattedAppointments = [];
-        for (const appointment of appointments) {
-            formattedAppointments.push({
-                id: appointment.id,
-                datetime: appointment.datetime,
-                service: {
-                    id: appointment.service.id,
-                    name: appointment.service.name,
-                },
-                client: {
-                    id: appointment.client.id,
-                    lastName: appointment.client.lastName,
-                },
-            });
-        }
-
+        const formattedAppointments = appointments.map(appointment => ({
+            id: appointment.id,
+            datetime: appointment.datetime,
+            service: { // Datos del servicio
+                id: appointment.service.id,
+                name: appointment.service.name,
+            },
+            client: {   // Datos del cliente
+                id: appointment.client.id,
+                lastName: appointment.client.lastName,
+            },
+        }));
+    
         res.json(formattedAppointments).status(200);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Internal server error" });
     }
-},
-
-
+}
 
 };
 
