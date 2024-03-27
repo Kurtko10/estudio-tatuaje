@@ -4,51 +4,61 @@ import { Client } from "../models/Client";
 import { Like } from "typeorm";
 import bcrypt from "bcrypt";
 import { Artist } from "../models/Artist";
+import { UserRoles } from "../constants/UserRoles";
 
 
 export const userController = {
 
 // Crear usuario--------
 
-async create(req:Request,res:Response){
-    try {
-        const {firstName,lastName,email,phone,password,isActive,roleId} = req.body;
+async create(req: Request, res: Response): Promise<void> {
+  try {
+      const { firstName, lastName, email, phone, password, isActive, roleId } = req.body;
 
-        if (
-            !firstName ||
-            !lastName ||
-            !phone ||
-            !email ||
-            !password ||
-            !isActive ||
-            ! roleId
-          ) {
-            res.status(400).json({
-              message: "All fields must be provided",
-            });
-            return;
-          }
+      if (!firstName || !lastName || !phone || !email || !password || !isActive || !roleId) {
+          res.status(400).json({ message: "All fields must be provided" });
+          return;
+      }
 
-        const hashedPassword = await bcrypt.hash(password,10);
-        
-        const newUser = User.create({
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            phone: phone,
-            password:hashedPassword,
-            isActive:isActive,
-            role:roleId,
+      const hashedPassword = await bcrypt.hash(password, 10);
+      
+      // Crear y guardar el usuario
+      const newUser = User.create({
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          phone: phone,
+          password: hashedPassword,
+          isActive: isActive,
+          role: roleId,
+      });
+      await newUser.save();
 
-        });
-        await newUser.save();
+      
+      if (roleId === 2) {
+          const newArtist = Artist.create({
+              name: lastName,
+              specialty: 'Especialidad', 
+              user: newUser, 
+          });
+          await newArtist.save();
+      } else if (roleId === 3) {
+          const newClient = Client.create({
+              lastName: lastName,
+              provincia: "Provincia", 
+              user: newUser, 
+          });
+          await newClient.save();
+      }
 
-        res.status(200).json({message:"User has been created"});
-    }catch(error){
-        console.error(error);
-        res.status(500).json({message:"Error al crear usuario"});
-    }
+      res.status(200).json({ message: "User has been created" });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Error al crear usuario" });
+  }
 },
+
+
 
   // Eliminar usuario
   async delete(req: Request, res: Response): Promise<void> {
@@ -109,7 +119,7 @@ async getArtist(req: Request, res: Response): Promise<void> {
             });
             res.json(artists);
         } catch (error) {
-            res.status(500).json({ message: "Something went wrong" });
+            res.status(500).json({ message: "Internal server error" });
         }
 },
 

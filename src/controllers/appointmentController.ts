@@ -12,6 +12,7 @@ export const appointmentController = {
 // Crear cita
 async createAppointment(req: Request, res: Response): Promise<void> {
     try {
+        
         const { datetime, service_id, artist_id, client_id } = req.body;
 
         if (datetime && isNaN(new Date(datetime).getTime())) {

@@ -30,11 +30,11 @@ export class AppointmentSeeder extends Seeder {
 
             // Comparar la fecha de la cita con la fecha actual
             if (appointment.datetime < currentDate) {
-                appointment.status = AppointmentStatus.COMPLETED; // Si la cita es anterior a la fecha actual, establecer el estado como COMPLETED
+                appointment.status = AppointmentStatus.COMPLETED; 
             } else if (appointment.datetime.toDateString() === currentDate.toDateString()) {
-                appointment.status = AppointmentStatus.IN_PROGRESS; // Si la cita es para el día de hoy, establecer el estado como IN_PROGRESS
+                appointment.status = AppointmentStatus.IN_PROGRESS; 
             } else {
-                appointment.status = AppointmentStatus.PENDING; // Si la cita es en el futuro, establecer el estado como PENDING
+                appointment.status = AppointmentStatus.PENDING;
             }
         });
 
