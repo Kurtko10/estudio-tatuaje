@@ -215,7 +215,7 @@ async updateProfile(
     });
 
     if (!userToUpdate) {
-      res.status(404).json({ message: "User not foundmo no no" });
+      res.status(404).json({ message: "User not found" });
       return;
     }
 

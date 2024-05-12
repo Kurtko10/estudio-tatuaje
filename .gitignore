@@ -5,7 +5,8 @@
 ### direnv ###
 .direnv
 .envrc
-
+# Dependencias
+node_modules/
 ### Linux ###
 *~
 
