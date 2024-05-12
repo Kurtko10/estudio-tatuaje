@@ -1,10 +1,10 @@
-// import { TokenData } from "./types";
+import { TokenData } from "./types";
 
 
-// declare global {
-//     namespace Express {
-//         export interface Request {
-//             tokenData: TokenData;
-//         }
-//     }
-// }
+declare global {
+    namespace Express {
+        export interface Request {
+            tokenData: TokenData;
+        }
+    }
+}

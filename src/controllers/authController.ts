@@ -72,7 +72,7 @@ export const authController = {
 
          const user = await User.findOne({
             relations: { role: true },
-            select: { id: true, email: true, password: true },
+            select: { id: true, email: true, password: true, firstName:true },
             where: { email: email },
          });
          if (!user) {
@@ -93,6 +93,7 @@ export const authController = {
          const tokenPayload: TokenData = {
             userId: user.id,
             userRole: user.role.name,
+            userName:user.firstName,
          };
 
          const token = jwt.sign(
@@ -106,7 +107,13 @@ export const authController = {
          res.status(200).json({
             message: "Login succesfully",
             token,
+            user,
+            
          });
+
+         
+         console.log(user);
+         
       } catch (error) {
          res.status(500).json({
             message: "Failed to login user",

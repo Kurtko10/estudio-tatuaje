@@ -5,6 +5,8 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 interface TokenData {
     userId: number;
     userRole: string;
+    userName?:string;
+    
 }
 
 
@@ -32,8 +34,9 @@ export const auth = (req: Request, res: Response, next: NextFunction) => {
         req.tokenData = {
             userId: decoded.userId,
             userRole: decoded.userRole,
+            userName:decoded.userName //antes estaba firstName
         };
-        console.log(req.tokenData);
+        // console.log(req.tokenData);
         console.log(token);
         
         

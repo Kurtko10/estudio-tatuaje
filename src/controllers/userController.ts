@@ -124,7 +124,6 @@ async getArtist(req: Request, res: Response): Promise<void> {
 },
 
 // Mostrar usuario por ID----------
-
 async getById(req: Request, res: Response): Promise<void> {
   try {
     const userId = Number(req.params.id);
@@ -134,18 +133,37 @@ async getById(req: Request, res: Response): Promise<void> {
       return;
     }
 
-    const user = await User.findOne({ where: { id: userId } });
+    // Recuperar los datos del usuario y sus relaciones con otras tablas
+    const user = await User.findOne({
+      relations: ["role", "clients", "artists"], // Incluir relaciones con otras tablas
+      where: { id: userId }
+    });
 
     if (!user) {
       res.status(404).json({ message: "User not found" });
       return;
     }
 
+// Verificar si el usuario es un cliente y obtener los datos de la tabla "clients"
+if (user.clients) {
+  // Verificar si hay al menos un cliente asociado al usuario
+  if (user.clients.length > 0) {
+    const client = await Client.findOne({ where: { id: user.clients[0].id } });
+    if (client) {
+      user.clients[0] = client; // Asignar los datos del cliente al usuario
+    }
+  }
+}
+
+
+
     res.json(user);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Internal server error" });
   }
 },
+
 
 
 // Actualizar datos de usuario
@@ -197,7 +215,7 @@ async updateProfile(
     });
 
     if (!userToUpdate) {
-      res.status(404).json({ message: "User not found" });
+      res.status(404).json({ message: "User not foundmo no no" });
       return;
     }
 

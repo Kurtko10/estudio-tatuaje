@@ -26,7 +26,7 @@ router.get("/role/clients",auth, authorize(["manager"]), userController.getByCli
 router.get("/profile/profile",auth, userController.getProfile);
 
 // Actualizar perfil personal usuario
-router.put("/profile", auth, userController.updateProfile);
+router.put("/profile", auth,authorize(["user"]), userController.updateProfile);
 
 // Crear usuario
 router.post("/",auth,authorize([]), userController.create);
@@ -35,7 +35,7 @@ router.post("/",auth,authorize([]), userController.create);
 router.put("/:id",auth,authorize([]),userController.update);
 
 // Eliminar usuario
-router.delete("/:id",auth,authorize([]),userController.delete);
+router.delete("/:id",auth,userController.delete);
 
 
 export default router;
