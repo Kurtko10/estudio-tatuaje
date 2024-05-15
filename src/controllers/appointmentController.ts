@@ -357,6 +357,7 @@ async getAppointmentsByClientId(req: Request, res: Response): Promise<void> {
         const formattedAppointments = appointments.map(appointment => ({
             id: appointment.id,
             datetime: appointment.datetime,
+            status: appointment.status,
             service: { // Datos del servicio
                 id: appointment.service.id,
                 name: appointment.service.name, 

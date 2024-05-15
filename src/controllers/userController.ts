@@ -12,9 +12,10 @@ export const userController = {
 // Crear usuario--------
 
 async create(req: Request, res: Response): Promise<void> {
+  
   try {
       const { firstName, lastName, email, phone, password, isActive, roleId } = req.body;
-
+      console.log("Datos recibidos:", JSON.stringify(req.body, null, 2));
       if (!firstName || !lastName || !phone || !email || !password || !isActive || !roleId) {
           res.status(400).json({ message: "All fields must be provided" });
           return;
@@ -38,19 +39,20 @@ async create(req: Request, res: Response): Promise<void> {
       if (roleId === 2) {
           const newArtist = Artist.create({
               name: lastName,
-              specialty: 'Especialidad', 
+              specialty: 'specialty', 
               user: newUser, 
           });
+          
           await newArtist.save();
       } else if (roleId === 3) {
           const newClient = Client.create({
               lastName: lastName,
-              provincia: "Provincia", 
+              provincia: "provincia", 
               user: newUser, 
           });
           await newClient.save();
       }
-
+      
       res.status(200).json({ message: "User has been created" });
   } catch (error) {
       console.error(error);
