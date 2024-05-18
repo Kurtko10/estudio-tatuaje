@@ -9,7 +9,7 @@ const router = express.Router();
 router.post("/",auth, appointmentController.createAppointment);
 
 // Ruta para actualizar una cita específica
-router.put('/:id',auth,authorize(["manager"]), appointmentController.updateAppointment);
+router.put('/:id',auth,authorize(["manager", "user"]), appointmentController.updateAppointment);
 
 // Eliminar cita
 router.delete("/:id",auth,appointmentController.deleteAppointment);

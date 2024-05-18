@@ -14,7 +14,7 @@ export const userController = {
 async create(req: Request, res: Response): Promise<void> {
   
   try {
-      const { firstName, lastName, email, phone, password, isActive, roleId } = req.body;
+      const { firstName, lastName, email, phone, password,provincia, specialty, isActive, roleId } = req.body;
       console.log("Datos recibidos:", JSON.stringify(req.body, null, 2));
       if (!firstName || !lastName || !phone || !email || !password || !isActive || !roleId) {
           res.status(400).json({ message: "All fields must be provided" });
@@ -39,7 +39,7 @@ async create(req: Request, res: Response): Promise<void> {
       if (roleId === 2) {
           const newArtist = Artist.create({
               name: lastName,
-              specialty: 'specialty', 
+              specialty: specialty, 
               user: newUser, 
           });
           
@@ -47,7 +47,7 @@ async create(req: Request, res: Response): Promise<void> {
       } else if (roleId === 3) {
           const newClient = Client.create({
               lastName: lastName,
-              provincia: "provincia", 
+              provincia: provincia, 
               user: newUser, 
           });
           await newClient.save();
