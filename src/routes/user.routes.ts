@@ -26,7 +26,7 @@ router.get("/role/clients",auth, authorize(["manager"]), userController.getByCli
 router.get("/profile/profile",auth, userController.getProfile);
 
 // Actualizar perfil personal usuario
-router.put("/profile", auth,authorize(["user"]), userController.updateProfile);
+router.put("/profile", auth,authorize(["user", "manager"]), userController.updateProfile);
 
 // Crear usuario
 router.post("/",auth,authorize([]), userController.create);

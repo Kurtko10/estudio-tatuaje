@@ -12,7 +12,7 @@ router.post("/",auth, appointmentController.createAppointment);
 router.put('/:id',auth,authorize(["manager", "user"]), appointmentController.updateAppointment);
 
 // Eliminar cita
-router.delete("/:id",auth,appointmentController.deleteAppointment);
+router.delete("/:id",auth,authorize(["user"]),appointmentController.deleteAppointment);
 
 // Citas de un usuario por client_Id
 router.get('/client/',auth, appointmentController.getAppointmentsByClientId);
